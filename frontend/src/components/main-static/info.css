@@ -1,0 +1,33 @@
+.what-is-this {
+    color: black;
+    text-align: center;
+    font-size: 70px;
+    margin-top: 75px;
+    animation: slideDown 1.8s ease forwards;
+}
+
+.col-center {
+  text-align: center;
+  font-size: 30px;
+  margin-top: 150px;
+  animation: slideDown 1.8s ease forwards;
+}
+
+.img-fluid {
+  width: 500px;
+  height: 300px;
+  border-radius: 41px;
+  box-shadow: 30px -30px 0px lightyellow;
+  animation: slideDown 1.8s ease forwards;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
