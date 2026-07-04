@@ -1,20 +1,12 @@
 import Review from "./Review.jsx";
 
-import "./review-list.css"
+import "./review-list.css";
 
-export default function ReviewsList({ reviews, query, setQuery }) {
+export default function ReviewsList({ reviews, query, setQuery, onDelete, onUpdate }) {
   //creating a controlled component
 
-  function renderReview(review, index) {
-    return (
-      <Review
-        key={index}
-        reviewType={review.reviewType}
-        reviewImage={review.reviewImage}
-        reviewRating={review.reviewRating}
-        reasoning={review.reasoning}
-      />
-    );
+  function renderReview(review) {
+    return <Review key={review._id} review={review} onDelete={onDelete} onUpdate={onUpdate} />;
   }
 
   const onQuery = (event) => {
@@ -26,11 +18,16 @@ export default function ReviewsList({ reviews, query, setQuery }) {
   // need to have a value prop and an onChange prop to controlled components
   return (
     <>
-      <input value={query} className="input-review" onChange={onQuery} placeholder="Filter Reviews..." />
+      <input
+        value={query}
+        className="input-review"
+        onChange={onQuery}
+        placeholder="Filter Reviews..."
+      />
       {!reviews?.length ? (
         <div>Loading Reviews....</div>
       ) : (
-        reviews.map((review, index) => renderReview(review, index))
+        reviews.map((review) => renderReview(review))
       )}
     </>
   );

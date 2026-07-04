@@ -6,47 +6,38 @@ import "./reviews-form.css";
 
 import { useState } from "react";
 
-export default function ReviewsForm({ reloadReviews }) {
-  const [review, setReview] = useState({
-    reviewType: "",
-    reviewImage: "",
-    reviewRating: 0,
-    reasoning: "",
-  });
+export default function ReviewsForm({ onCreate, onUpdate, onCancel, initialReview }) {
+  const [review, setReview] = useState(
+    initialReview
+      ? {
+          reviewType: initialReview.reviewType,
+          reviewImage: initialReview.reviewImage,
+          reviewRating: initialReview.reviewRating,
+          reasoning: initialReview.reasoning,
+        }
+      : { reviewType: "", reviewImage: "", reviewRating: 0, reasoning: "" }
+  );
+
+  const isEditing = Boolean(initialReview?._id);
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    console.log("onSubmit", review);
-
-    const res = await fetch("/api/reviews", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(review),
-    });
-
-    if (!res.ok) {
-      console.error("failed to create review", res.statusText);
-      return;
+    if (isEditing) {
+      await onUpdate(initialReview._id, review);
     } else {
-      const data = await res.json();
-      console.log("Listing created successfully", data);
-      // reset the form after submission
+      await onCreate(review);
       setReview({
         reviewType: "",
         reviewImage: "",
         reviewRating: 0,
         reasoning: "",
       });
-
-      reloadReviews();
     }
   };
 
   return (
     <>
-      <h2>Create Game Review</h2>
+      <h2>{isEditing ? "Edit Review" : "Create Review"}</h2>
       <Form onSubmit={onSubmit}>
         <FloatingLabel controlId="floatingInput" label="Title" className="mb-3">
           <Form.Control
@@ -100,8 +91,13 @@ export default function ReviewsForm({ reloadReviews }) {
           />
         </Form.Group>
         <Button className="submitt-btn" type="submit">
-          Submit
+          {isEditing ? "Save Changes" : "Submit"}
         </Button>
+        {isEditing && (
+          <Button type="button" variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+        )}
       </Form>
     </>
   );

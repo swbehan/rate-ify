@@ -28,4 +28,26 @@ reviewsRouter.post("/reviews", async (req, res) => {
   }
 });
 
+reviewsRouter.delete("/reviews/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await reviewsCollection.deleteReview(id);
+    res.status(200).json({ message: "Successfully deleted review", result });
+  } catch (error) {
+    console.error("Error deleting review from the DB", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+reviewsRouter.put("/reviews/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await reviewsCollection.updateReview(id, req.body);
+    res.status(200).json({ message: "Successfully updated review", result });
+  } catch (error) {
+    console.error("Error updating review to the DB", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default reviewsRouter;
