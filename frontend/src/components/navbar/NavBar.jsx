@@ -7,12 +7,12 @@ export default function NavBar() {
   return (
     <Navbar expand="lg" className="nav-bar-outer-container">
       <Container>
-        <Navbar.Brand className="brand-name" href="#home">Rate-ify</Navbar.Brand>
+        <Navbar.Brand className="brand-name" href="/">Rate-ify</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#link">Link</Nav.Link>
+            <Nav.Link href="/">Home</Nav.Link>
+            <Nav.Link href="/about">About</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
