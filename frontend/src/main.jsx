@@ -6,16 +6,20 @@ import "./index.css";
 import BasePage from "./pages/BasePage.jsx";
 import GameApp from "./pages/GameApp.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BasePage>
-      <BrowserRouter>
+    <BrowserRouter>
+      <BasePage>
         <Routes>
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<GameApp />} />
           <Route path="/about" element={<AboutPage />} />
         </Routes>
-      </BrowserRouter>
-    </BasePage>
+      </BasePage>
+    </BrowserRouter>
   </StrictMode>
 );

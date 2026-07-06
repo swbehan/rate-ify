@@ -1,5 +1,7 @@
 import express from "express";
 import session from "express-session";
+import MongoStore from "connect-mongo";
+import { CLIENT, DB_NAME } from "./db/config.js";
 import passport from "./config/passport.js";
 import reviewsRouter from "./routes/reviews.js";
 import authRouter from "./routes/Auth.js";
@@ -13,18 +15,39 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// In production the app runs behind a reverse proxy (Render/Railway/Nginx/etc.)
+// that terminates HTTPS. Trusting the proxy lets Express see the request as
+// secure, so `cookie.secure: true` actually sends the session cookie.
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session Configuration
 app.use(
   session({
-    secret: "super-secret-key-shhh",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    // Persist sessions in MongoDB (reusing the existing client / connection pool)
+    // so logins survive server restarts and deploys, instead of the default
+    // in-memory store that is wiped on every restart.
+    store: MongoStore.create({
+      client: CLIENT,
+      dbName: DB_NAME,
+      collectionName: "sessions",
+      ttl: 24 * 60 * 60, // seconds — expired sessions are cleaned up automatically
+    }),
     cookie: {
-      secure: false, // set to true in production with HTTPS
+      // Only send the cookie over HTTPS in production; stays off in dev so
+      // it still works on http://localhost.
+      secure: process.env.NODE_ENV === "production",
+      // JS in the browser can't read the cookie — mitigates XSS token theft.
       httpOnly: true,
+      // Don't send the cookie on cross-site requests — mitigates CSRF.
+      sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
