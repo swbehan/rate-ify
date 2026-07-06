@@ -1,4 +1,6 @@
 import express from "express";
+import session from "express-session";
+import passport from "./config/passport.js";
 import reviewsRouter from "./routes/reviews.js";
 import authRouter from "./routes/Auth.js";
 
@@ -13,6 +15,24 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Session Configuration
+app.use(
+  session({
+    secret: "super-secret-key-shhh",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // set to true in production with HTTPS
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
+
+// Initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/", express.static("./frontend/dist"));
 app.use("/api", reviewsRouter);
